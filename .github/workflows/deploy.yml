@@ -19,16 +19,15 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 2200 # ⚠️ Change ce numéro si ton cPanel utilise un port SSH spécifique (ex: 30022)
+          port: 22
           script: |
-            # 1. Se déplacer dans le dossier du projet sur le cPanel
-            # (Remplace "tooauto-web" par le nom exact du dossier sur ton serveur s'il est différent)
-            if [ ! -d "~/tooauto-web" ]; then
-              cd ~
+            # 1. Se déplacer dans le dossier de l'utilisateur cPanel
+            if [ ! -d "/home/joeldjebi/tooauto-web" ]; then
+              cd /home/joeldjebi
               git clone git@github.com:${{ github.repository }}.git tooauto-web
             fi
 
-            cd ~/tooauto-web
+            cd /home/joeldjebi/tooauto-web
 
             # 2. Récupérer le dernier code
             git pull origin main
