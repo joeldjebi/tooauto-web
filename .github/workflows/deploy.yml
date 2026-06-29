@@ -19,7 +19,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 30022 # ⚠️ Change ce numéro si ton cPanel utilise un port SSH spécifique (ex: 30022)
+          port: 2087 # ⚠️ Change ce numéro si ton cPanel utilise un port SSH spécifique (ex: 30022)
           script: |
             # 1. Se déplacer dans le dossier du projet sur le cPanel
             # (Remplace "tooauto-web" par le nom exact du dossier sur ton serveur s'il est différent)
