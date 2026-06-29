@@ -1,0 +1,45 @@
+name: Deploy Laravel Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Executing remote SSH commands to deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 2087 # ⚠️ Change ce numéro si ton cPanel utilise un port SSH spécifique (ex: 30022)
+          script: |
+            # 1. Se déplacer dans le dossier du projet sur le cPanel
+            # (Remplace "tooauto-web" par le nom exact du dossier sur ton serveur s'il est différent)
+            if [ ! -d "~/tooauto-web" ]; then
+              cd ~
+              git clone git@github.com:${{ github.repository }}.git tooauto-web
+            fi
+
+            cd ~/tooauto-web
+
+            # 2. Récupérer le dernier code
+            git pull origin main
+
+            # 3. Installer les dépendances PHP
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+            # 4. Exécuter les optimisations Laravel
+            php artisan down
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan up
