@@ -21,24 +21,31 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # 1. Se déplacer dans le dossier de l'utilisateur cPanel
-            if [ ! -d "/home/joeldjebi/tooauto-web" ]; then
-              cd /home/joeldjebi
+            # 1. Se déplacer dans le dossier personnel du compte root
+            cd /root
+
+            # 2. Cloner le projet s'il n'existe pas, sinon se préparer à le mettre à jour
+            if [ ! -d "tooauto-web" ]; then
               git clone git@github.com:${{ github.repository }}.git tooauto-web
             fi
 
-            cd /home/joeldjebi/tooauto-web
+            cd /root/tooauto-web
 
-            # 2. Récupérer le dernier code
-            git pull origin main
+            # 3. Nettoyer et récupérer le dernier code proprement
+            git fetch --all
+            git reset --hard origin/main
 
-            # 3. Installer les dépendances PHP
+            # 4. Installer les dépendances PHP avec Composer
             composer install --no-dev --optimize-autoloader --no-interaction
 
-            # 4. Exécuter les optimisations Laravel
-            php artisan down
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            php artisan up
+            # 5. Exécuter les optimisations Laravel si le fichier .env existe
+            if [ -f ".env" ]; then
+              php artisan down
+              php artisan migrate --force
+              php artisan config:cache
+              php artisan route:cache
+              php artisan view:cache
+              php artisan up
+            else
+              echo "⚠️ Attention : Fichier .env absent. Pense à créer le fichier /root/tooauto-web/.env manuellement sur ton serveur."
+            fi
