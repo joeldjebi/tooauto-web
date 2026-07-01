@@ -55,7 +55,7 @@
             <h3 class="text-xl font-semibold text-gray-900 mb-4">Ou scannez le QR code</h3>
             <div class="bg-white rounded-lg p-4 inline-block">
                 <div class="w-32 h-32 bg-gray-200 rounded flex items-center justify-center">
-                    <img src="{{ asset('images/qr-code.png') }}" alt="QR Code TOOAUTO" class="w-24 h-24">
+                    <img src="{{ asset('images/qrcode.png') }}" alt="QR Code TOOAUTO" class="w-24 h-24 object-contain">
                 </div>
             </div>
             <p class="text-sm text-gray-600 mt-4">Scannez avec votre appareil photo pour télécharger directement</p>
