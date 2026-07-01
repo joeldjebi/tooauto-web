@@ -21,24 +21,34 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # 1. Se déplacer dans le dossier personnel du compte root
-            cd /root
+            # 1. Se déplacer dans le dossier du projet
+            cd /home/tooautoweb/tooauto-web
 
-            # 2. Cloner le projet s'il n'existe pas, sinon se préparer à le mettre à jour
-            if [ ! -d "tooauto-web" ]; then
-              git clone git@github.com:${{ github.repository }}.git tooauto-web
-            fi
-
-            cd /root/tooauto-web
-
-            # 3. Nettoyer et récupérer le dernier code proprement
+            # 2. Nettoyer et récupérer le dernier code proprement (inclut tous les fichiers cachés et dotfiles)
+            git config --global --add safe.directory /home/tooautoweb/tooauto-web
             git fetch --all
             git reset --hard origin/main
 
-            # 4. Installer les dépendances PHP avec Composer
-            composer install --no-dev --optimize-autoloader --no-interaction
+            # 3. Installer les dépendances PHP (avec contournement des restrictions d'extensions)
+            composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs --prefer-source
 
-            # 5. Exécuter les optimisations Laravel si le fichier .env existe
+            # 4. Synchroniser le dossier public complet (et ses fichiers cachés comme .htaccess) vers public_html
+            cp -r /home/tooautoweb/tooauto-web/public/. /home/tooautoweb/public_html/
+
+            # 5. Réajuster l'index.php pour qu'il cible le cœur du projet déplacé
+            sed -i "s|__DIR__.'/../vendor/autoload.php'|__DIR__.'/../tooauto-web/vendor/autoload.php'|g" /home/tooautoweb/public_html/index.php
+            sed -i "s|__DIR__.'/../storage/bootstrap/app.php'|__DIR__.'/../tooauto-web/bootstrap/app.php'|g" /home/tooautoweb/public_html/index.php
+            # Optionnel : injecter le display_errors pour le debug au besoin
+            sed -i '/<?php/a ini_set("display_errors", 1);\nini_set("display_startup_errors", 1);\nerror_reporting(E_ALL);' /home/tooautoweb/public_html/index.php
+
+            # 6. Fixer les permissions d'accès requises par cPanel/Apache
+            chown -R tooautoweb:tooautoweb /home/tooautoweb/tooauto-web
+            chown -R tooautoweb:tooautoweb /home/tooautoweb/public_html
+            chmod 755 /home/tooautoweb/public_html
+            chmod 644 /home/tooautoweb/public_html/index.php
+            chmod 644 /home/tooautoweb/public_html/.htaccess
+
+            # 7. Exécuter les optimisations Laravel si le fichier .env existe
             if [ -f ".env" ]; then
               php artisan down
               php artisan migrate --force
@@ -47,5 +57,5 @@ jobs:
               php artisan view:cache
               php artisan up
             else
-              echo "⚠️ Attention : Fichier .env absent. Pense à créer le fichier /root/tooauto-web/.env manuellement sur ton serveur."
+              echo "⚠️ Attention : Fichier .env absent. Pense à créer le fichier /home/tooautoweb/tooauto-web/.env manuellement sur ton serveur."
             fi

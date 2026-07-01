@@ -30,7 +30,7 @@
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-4">App Store</h3>
                 <p class="text-gray-600 mb-6">Téléchargez TOOAUTO sur votre iPhone ou iPad</p>
-                <a href="#" class="inline-block bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200">
+                <a target="_blank" href="https://apps.apple.com/ci/app/tooauto/id6743125856" class="inline-block bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200">
                     Télécharger sur l'App Store
                 </a>
             </div>
@@ -44,7 +44,7 @@
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-4">Google Play</h3>
                 <p class="text-gray-600 mb-6">Téléchargez TOOAUTO sur votre appareil Android</p>
-                <a href="#" class="inline-block bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200">
+                <a target="_blank" href="https://play.google.com/store/apps/details?id=com.tooauto.androidApp" class="inline-block bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200">
                     Télécharger sur Google Play
                 </a>
             </div>
@@ -55,7 +55,7 @@
             <h3 class="text-xl font-semibold text-gray-900 mb-4">Ou scannez le QR code</h3>
             <div class="bg-white rounded-lg p-4 inline-block">
                 <div class="w-32 h-32 bg-gray-200 rounded flex items-center justify-center">
-                    <span class="text-gray-500 text-sm">QR Code</span>
+                    <img src="{{ asset('images/qr-code.png') }}" alt="QR Code TOOAUTO" class="w-24 h-24">
                 </div>
             </div>
             <p class="text-sm text-gray-600 mt-4">Scannez avec votre appareil photo pour télécharger directement</p>
